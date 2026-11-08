@@ -1,51 +1,100 @@
 # ShotDrag
 
-Windows 截圖拖曳小工具（PySide6）。使用 `Win + Shift + S` 截圖後，程式會在螢幕右上角顯示可拖曳縮圖，方便將 PNG 拖放到支援檔案拖曳的應用程式。
+**English** | [繁體中文](#繁體中文)
 
-> 此程式由使用者自行在 Windows 執行；GitHub 倉庫僅保存原始碼，不會自動執行程式。原始碼已通過 Python 語法檢查，但尚未在此環境執行 Windows GUI 自動化測試。
+A lightweight Windows utility that turns clipboard images into draggable PNG files. Capture with **Win + Shift + S**, then drag the floating thumbnail into apps that accept file drops, such as ChatGPT, Claude, Discord, or LINE.
 
-## 功能
+> **Status:** Personal project / work in progress. Python syntax has been checked, and the user has tested basic screenshot capture on Windows; cross-machine testing and automated Windows GUI tests have not been completed.
 
-- 監聽剪貼簿中的圖片（不限於 Windows 截圖快捷鍵）
-- 使用可重啟的 150ms 單次計時器，合併密集的剪貼簿變動通知
-- 將圖片儲存為 PNG，避免覆寫現有檔案
-- 提供可拖曳縮圖，雙擊可開啟圖片，右鍵關閉
-- Windows 系統匣常駐、暫停監聽、開機啟動選項
-- 簡約設計的系統匣圖示
-- 透過 Mutex 防止程式重複啟動
-- 發生未預期錯誤時，可查看 `%LOCALAPPDATA%\ShotDrag\error.log`
+## Features
 
-## 使用環境
+- Watches the Windows clipboard for images (not limited to the screenshot shortcut).
+- Uses a restartable, single-shot 150 ms timer to debounce rapid clipboard notifications.
+- Saves each captured image as a PNG with a collision-resistant filename without overwriting files.
+- Shows a draggable floating thumbnail. Double-click to open; right-click to dismiss.
+- Runs in the Windows system tray with pause/resume, open-folder, exit, and optional auto-start.
+- Uses a single-instance mutex to prevent accidentally running multiple copies.
+- Writes unexpected Python errors to `%LOCALAPPDATA%\ShotDrag\error.log`.
+- Includes a minimalist system tray icon.
 
-- Windows 10 / 11
-- Python 3.12（目前使用的版本）
+## Requirements
+
+- Windows 10 or Windows 11
+- Python 3.12 (the version used for development; other versions are not verified)
 - [PySide6](https://pypi.org/project/PySide6/)
 
-## 安裝與啟動
+## Installation
 
-在 PowerShell 中進入放置程式的資料夾後：
+Clone or download this repository. Open PowerShell in the folder containing `shotdrag.py`, then run:
 
-```powershell
+~~~powershell
 py -3.12 -m pip install -r requirements.txt
 py -3.12 shotdrag.py
-```
+~~~
 
-確認可正常使用後，若希望不顯示 PowerShell 主控台，可以使用對應 Python 安裝位置的 `pythonw.exe` 啟動 `shotdrag.py`。請注意：使用 `pythonw.exe` 時，啟動錯誤不會出現在終端機內；必要時先用 `python.exe` 除錯。
+Once you have verified it launches, you can start it with `pythonw.exe` from the **same Python environment** to hide the console window. When troubleshooting, use `python.exe` so startup errors are visible.
 
-## 檔案儲存位置
+## Usage
 
-程式會在 `shotdrag.py` 所在目錄旁自動建立 `screenshot/`，截圖以 `截圖_*.png` 命名；此資料夾已在 `.gitignore` 中排除，不應提交至 GitHub。
+1. Run ShotDrag and look for its icon in the system tray (including hidden icons).
+2. Press **Win + Shift + S** and take a screenshot, or copy an image to the clipboard.
+3. Drag the thumbnail that appears in the upper-right corner into a compatible app.
+4. Right-click the tray icon to pause/resume, open the screenshot folder, enable auto-start, or quit.
 
-## 系統匣操作
+**Where files go:** ShotDrag creates a `screenshot/` folder next to `shotdrag.py` and saves images there as `截圖_*.png`. This folder is excluded by `.gitignore`.
 
-在 ShotDrag 圖示上按右鍵，可暫停或恢復監聽、設定登入 Windows 後自動執行、開啟截圖資料夾，或結束程式。
+## Known limitations
 
-## 已知限制
+- Debouncing is **not a queue**: if multiple different images arrive within the 150 ms window, only the most recent clipboard image may be processed.
+- An image identical to the previously saved one may not produce another thumbnail because of duplicate suppression.
+- This project is Windows-only and is distributed as Python source code, **not** a pre-built Windows executable.
+- Auto-start settings refer to the location of the script. If you move or rename it, update the auto-start setting.
 
-- 若在 150ms 的合併時間內連續複製多張不同圖片，可能只會保留最後一張剪貼簿圖片；此功能不保證每次快速截圖都會保存。
-- 連續複製與上一張內容完全相同的圖片時，程式可能不會再次顯示縮圖。
-- 程式目前只支援 Windows，且必須在本機安裝 PySide6。
+## Privacy
 
-## 隱私
+ShotDrag saves images locally. It does not upload screenshots to GitHub or to any server on its own. Do not commit your personal screenshots, error logs, API keys, or other private files to the repository.
 
-截圖保存在本機，不會由 ShotDrag 自動上傳到 GitHub；請勿將 `screenshot/`、`error.log`、任何個人截圖或含有憑證的設定檔提交至公開倉庫。建議先以 **Private** 倉庫保存。
+## License
+
+Licensed under the [MIT License](LICENSE). You may use, modify, and redistribute this code under the terms of that license.
+
+---
+
+## 繁體中文
+
+**ShotDrag** 是 Windows 截圖拖曳小工具。按 **Win + Shift + S** 截圖後，畫面右上角會出現浮動縮圖，可直接拖進支援檔案拖放的 ChatGPT、Claude、LINE、Discord 等程式。
+
+### 主要功能
+
+- 監聽剪貼簿圖片，不限於 Windows 截圖快捷鍵。
+- 使用 150 毫秒單次計時器合併密集的剪貼簿通知。
+- 將圖片另存為 PNG，不覆蓋既有檔案。
+- 浮動縮圖可拖曳；雙擊開啟；右鍵關閉。
+- 系統匣提供暫停／恢復、開啟資料夾、開機啟動與結束功能。
+- 具備簡約系統匣圖示、單一執行個體保護與錯誤日誌。
+
+### 安裝與執行
+
+需要 Windows 10／11、Python 3.12 和 PySide6。先下載本倉庫並在程式所在資料夾開啟 PowerShell：
+
+~~~powershell
+py -3.12 -m pip install -r requirements.txt
+py -3.12 shotdrag.py
+~~~
+
+測試成功後，可使用與安裝 PySide6 相同 Python 環境的 `pythonw.exe` 背景啟動，避免跳出主控台。若程式無法啟動，先以 `python.exe` 查看錯誤。
+
+### 截圖儲存與操作
+
+程式會在 `shotdrag.py` 旁自動建立 `screenshot/` 資料夾，並將圖片以 `截圖_*.png` 命名。系統匣選單可以暫停監聽、開啟儲存資料夾、設定開機啟動及結束程式。
+
+### 已知限制與隱私
+
+- 在 150 毫秒內快速連續複製多張圖片，可能只處理最後一張。
+- 若新複製的圖片與上一張完全相同，可能不會重新顯示縮圖。
+- 本工具只支援 Windows，尚未全面完成 Windows GUI 自動化測試。
+- 截圖只存放在本機，不會由本程式自動上傳至 GitHub。請勿提交 `screenshot/`、日誌或私人憑證。
+
+### 授權
+
+本專案採用 [MIT License](LICENSE)，允許依授權條款使用、修改及再散布。

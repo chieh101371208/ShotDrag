@@ -1,0 +1,19 @@
+# Local screenshots and logs
+screenshot/
+*.log
+
+# Python caches and builds
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+build/
+dist/
+*.egg-info/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
